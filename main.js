@@ -17,7 +17,7 @@ function getData(type, cb) {
 function getTableHeader(obj){
     var tableHeaders = [];
     Object.keys(obj).forEach((key)=>{
-        tableHeaders.push(`<td>${key}</td>`);
+        tableHeaders.push(`<th>${key}</th>`);
     });
 
     return `<tr>${tableHeaders}</tr>`;
@@ -42,7 +42,6 @@ function writeToDocument(type){
     getData(type, function(data) {
         
         if(data.next || data.previous){
-            // console.log("next", data.next);
             pagination = generatePaginationBtns(data.next, data.previous);
         }
 
@@ -56,11 +55,7 @@ function writeToDocument(type){
             });
             tableRows.push(`<tr>${tableRow}</tr>`);
         });
-        // console.dir(pagination);
-
-        el.innerHTML = `<table>${tableHeaders}${tableRows}</table> ${pagination}`;
+        el.innerHTML = `<table>${tableHeaders}${tableRows}</table> ${pagination}`.replace(/,/g, "");
     });
 }
-
-// getData(printDataToConsole);
 
