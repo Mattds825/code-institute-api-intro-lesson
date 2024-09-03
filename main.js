@@ -3,7 +3,7 @@ const baseURL = "https://ci-swapi.herokuapp.com/api/";
 function getData(type, cb) {
   var xhr = new XMLHttpRequest();
   // open a new connection, using the GET request on the URL endpoint and send request
-  xhr.open("GET", baseURL+type+"/");
+  xhr.open("GET", type);
   xhr.send();
 
   xhr.onreadystatechange = function () {
@@ -23,11 +23,29 @@ function getTableHeader(obj){
     return `<tr>${tableHeaders}</tr>`;
 }
 
+function generatePaginationBtns(next, prev) {
+    if (next && prev) {
+        return `<button onclick="writeToDocument('${prev}')">Previous</button>
+                <button onclick="writeToDocument('${next}')">Next</button>`;
+    } else if (next && !prev) {
+        return `<button onclick="writeToDocument('${next}')">Next</button>`;
+    } else if (!next && prev) {
+        return `<button onclick="writeToDocument('${prev}')">Previous</button>`;
+    }
+}
+
 function writeToDocument(type){
     var tableRows = [];
     var el = document.getElementById("data");
+    var pagination = "";
     el.innerHTML = "";
     getData(type, function(data) {
+        
+        if(data.next || data.previous){
+            // console.log("next", data.next);
+            pagination = generatePaginationBtns(data.next, data.previous);
+        }
+
         data = data.results;
         var tableHeaders = getTableHeader(data[0]);
         data.forEach((item)=>{
@@ -38,9 +56,9 @@ function writeToDocument(type){
             });
             tableRows.push(`<tr>${tableRow}</tr>`);
         });
-        console.dir(data);
+        // console.dir(pagination);
 
-        el.innerHTML = `<table>${tableHeaders}${tableRows}</table>`;
+        el.innerHTML = `<table>${tableHeaders}${tableRows}</table> ${pagination}`;
     });
 }
 
